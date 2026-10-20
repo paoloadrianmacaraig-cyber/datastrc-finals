@@ -1,5 +1,3 @@
-package com.kingpin.model;
-
 /**
  * Represents a single line item within a customer order.
  */

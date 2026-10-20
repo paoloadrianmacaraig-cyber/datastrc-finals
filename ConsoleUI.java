@@ -1,26 +1,16 @@
-package com.kingpin.util;
-
-import com.kingpin.model.Order;
-import com.kingpin.model.OrderItem;
-import com.kingpin.model.Product;
-
 import java.util.List;
 
 /**
- * Utility for formatted console presentation, tables, banners, and receipts.
+ * Formatted console presentation, tables, banners, and receipts.
  */
 public class ConsoleUI {
 
-    // ANSI Colors for high-polish terminal aesthetics
     public static final String RESET = "\u001B[0m";
     public static final String BOLD = "\u001B[1m";
     public static final String CYAN = "\u001B[36m";
     public static final String GREEN = "\u001B[32m";
     public static final String YELLOW = "\u001B[33m";
     public static final String RED = "\u001B[31m";
-    public static final String MAGENTA = "\u001B[35m";
-    public static final String WHITE_BG = "\u001B[47m";
-    public static final String BLACK = "\u001B[30m";
 
     public static void printBanner() {
         System.out.println(CYAN + BOLD);

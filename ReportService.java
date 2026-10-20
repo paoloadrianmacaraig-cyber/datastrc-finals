@@ -1,10 +1,3 @@
-package com.kingpin.service;
-
-import com.kingpin.dsa.SortAlgorithms;
-import com.kingpin.model.Order;
-import com.kingpin.model.OrderItem;
-import com.kingpin.model.Product;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,10 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Generates managerial and analytical reports for the Kingpin MNL sub-branch.
- *
- * Employs Merge Sort (O(n log n)) on defensive copies to guarantee stable,
- * high-performance sorting without altering the master inventory's code-sorted invariant.
+ * Generates managerial and analytical reports for Kingpin MNL.
+ * Employs Merge Sort on defensive copies.
  */
 public class ReportService {
     private final InventoryService inventoryService;
@@ -26,9 +17,6 @@ public class ReportService {
         this.orderService = orderService;
     }
 
-    /**
-     * DTO representing product sales performance.
-     */
     public static class ProductSalesStat {
         private final String productCode;
         private final String productName;
@@ -64,11 +52,6 @@ public class ReportService {
         }
     }
 
-    /**
-     * Generates Best Sellers ranking sorted descending by units sold.
-     * Uses Merge Sort on an aggregated defensive copy.
-     * Time Complexity: O(n log n)
-     */
     public List<ProductSalesStat> getBestSellers() {
         Map<String, ProductSalesStat> statMap = new HashMap<>();
 
@@ -83,29 +66,16 @@ public class ReportService {
         }
 
         List<ProductSalesStat> statsList = new ArrayList<>(statMap.values());
-
-        // Sort descending by units sold using Merge Sort (Divide & Conquer)
         Comparator<ProductSalesStat> comparator = (a, b) -> Integer.compare(b.getUnitsSold(), a.getUnitsSold());
         return SortAlgorithms.mergeSort(statsList, comparator);
     }
 
-    /**
-     * Generates Low-Stock alert report sorted ascending by current stock level (most critical first).
-     * Uses Merge Sort on a defensive copy of low-stock products.
-     * Time Complexity: O(k log k) where k is the number of low-stock items.
-     */
     public List<Product> getLowStockReport() {
         List<Product> lowStock = inventoryService.getLowStockProducts();
-
-        // Sort ascending by stock quantity using Merge Sort
         Comparator<Product> comparator = Comparator.comparingInt(Product::getStock);
         return SortAlgorithms.mergeSort(lowStock, comparator);
     }
 
-    /**
-     * Computes Daily Sales summary for a target date (format: YYYY-MM-DD),
-     * or for all served orders if targetDate is null/empty.
-     */
     public static class DailySalesSummary {
         public String date;
         public int totalOrders;
@@ -139,9 +109,6 @@ public class ReportService {
         return summary;
     }
 
-    /**
-     * Generates structured replenishment summary to send back to the Main Branch.
-     */
     public String generateMainBranchSummaryReport() {
         StringBuilder sb = new StringBuilder();
         sb.append("========================================================================\n");

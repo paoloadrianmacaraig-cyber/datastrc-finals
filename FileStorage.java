@@ -1,8 +1,3 @@
-package com.kingpin.util;
-
-import com.kingpin.model.Order;
-import com.kingpin.model.Product;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,14 +11,18 @@ import java.util.Map;
 
 /**
  * Handles persistent CSV file storage for inventory and sales history.
- * Ensures data survives application restarts for main-branch synchronization.
+ * Automatically seeds default streetwear catalog if the file is absent.
  */
 public class FileStorage {
 
     public static List<Product> loadInventory(String filePath) {
         List<Product> products = new ArrayList<>();
         File file = new File(filePath);
+
+        // If file does not exist, seed default catalog
         if (!file.exists()) {
+            products.addAll(getDefaultSeedProducts());
+            saveInventory(filePath, products);
             return products;
         }
 
@@ -35,13 +34,19 @@ public class FileStorage {
                     try {
                         products.add(Product.fromCsv(line));
                     } catch (Exception e) {
-                        System.err.println("Warning: Skipping malformed product line: " + line);
+                        // ignore malformed line
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading inventory file: " + e.getMessage());
+            products.addAll(getDefaultSeedProducts());
         }
+
+        if (products.isEmpty()) {
+            products.addAll(getDefaultSeedProducts());
+            saveInventory(filePath, products);
+        }
+
         return products;
     }
 
@@ -55,7 +60,7 @@ public class FileStorage {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.err.println("Error writing inventory file: " + e.getMessage());
+            System.err.println("Error saving inventory: " + e.getMessage());
         }
     }
 
@@ -81,12 +86,12 @@ public class FileStorage {
                     try {
                         orders.add(Order.fromCsv(line, productMap));
                     } catch (Exception e) {
-                        System.err.println("Warning: Skipping malformed sales history line: " + line);
+                        // ignore malformed line
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading sales history file: " + e.getMessage());
+            // ignore
         }
         return orders;
     }
@@ -102,22 +107,25 @@ public class FileStorage {
             writer.write(order.toCsv());
             writer.newLine();
         } catch (IOException e) {
-            System.err.println("Error appending to sales history file: " + e.getMessage());
+            System.err.println("Error appending to sales history: " + e.getMessage());
         }
     }
 
-    public static void saveSalesHistory(String filePath, List<Order> orders) {
-        ensureParentDirectory(filePath);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("orderNumber,timestamp,itemsSerialized,totalAmount,cashReceived,change,status");
-            writer.newLine();
-            for (Order o : orders) {
-                writer.write(o.toCsv());
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            System.err.println("Error writing sales history file: " + e.getMessage());
-        }
+    private static List<Product> getDefaultSeedProducts() {
+        List<Product> list = new ArrayList<>();
+        list.add(new Product("KP-101", "Kingpin Classic Oversized Tee - Black", "Apparel", 750.00, 25, 5));
+        list.add(new Product("KP-102", "Kingpin Classic Oversized Tee - White", "Apparel", 750.00, 18, 5));
+        list.add(new Product("KP-103", "Manila Underground Heavyweight Hoodie", "Apparel", 1850.00, 8, 3));
+        list.add(new Product("KP-104", "Cyberpunk Metro Graphic Tee", "Apparel", 850.00, 12, 5));
+        list.add(new Product("KP-105", "Kingpin Signature Boxy Fit Tee - Olive", "Apparel", 790.00, 4, 5));
+        list.add(new Product("KP-106", "Raw Denim Streetwear Cargo Pants", "Apparel", 1650.00, 6, 3));
+        list.add(new Product("KP-107", "Kingpin 5-Panel Snapback Cap", "Accessories", 650.00, 15, 4));
+        list.add(new Product("KP-108", "Heavy Canvas Utility Tote Bag", "Accessories", 450.00, 20, 5));
+        list.add(new Product("KP-109", "Kingpin Vinyl Holographic Sticker Pack", "Accessories", 150.00, 40, 10));
+        list.add(new Product("KP-110", "Reversible Bomber Jacket - MNL Edition", "Apparel", 2450.00, 3, 2));
+        list.add(new Product("KP-111", "Acid Wash Vintage Graphic Tee", "Apparel", 890.00, 14, 5));
+        list.add(new Product("KP-112", "Industrial Webbing Key Lanyard", "Accessories", 250.00, 30, 8));
+        return list;
     }
 
     private static void ensureParentDirectory(String filePath) {

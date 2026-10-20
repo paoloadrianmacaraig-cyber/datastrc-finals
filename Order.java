@@ -1,7 +1,6 @@
-package com.kingpin.model;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a customer order in the Kingpin MNL POS and Order Queue system.
@@ -119,7 +118,7 @@ public class Order {
                 status);
     }
 
-    public static Order fromCsv(String csvLine, java.util.Map<String, Product> productLookup) {
+    public static Order fromCsv(String csvLine, Map<String, Product> productLookup) {
         String[] parts = csvLine.split(",");
         if (parts.length < 7) {
             throw new IllegalArgumentException("Invalid order CSV: " + csvLine);

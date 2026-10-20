@@ -1,6 +1,3 @@
-package com.kingpin.dsa;
-
-import com.kingpin.model.Product;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -8,21 +5,16 @@ import java.util.List;
 /**
  * Pure, custom implementations of Sorting Algorithms required by the DSA syllabus.
  *
- * Algorithms implemented:
  * 1. Insertion Sort: O(n^2) worst case, O(n) best case.
- *    Used to sort inventory by Product Code upon startup and during incremental product additions.
+ *    Used to sort inventory by Product Code and maintain sorting upon insertion.
  * 2. Merge Sort: Guaranteed O(n log n) stable divide-and-conquer algorithm.
- *    Used on defensive copies to generate Best Sellers and Low-Stock reports without
- *    breaking the binary-searchable code-sorted invariant of the master inventory.
+ *    Used on defensive copies for Best Sellers and Low-Stock reports.
  */
 public class SortAlgorithms {
 
     /**
      * Performs an in-place Insertion Sort on a product list ordered by product code ascending.
-     * Time Complexity: O(n^2) worst/average, O(n) best (nearly sorted).
-     * Space Complexity: O(1).
-     *
-     * @param products The list of products to sort in-place.
+     * Time Complexity: O(n^2) worst, O(n) best.
      */
     public static void insertionSortProductsByCode(List<Product> products) {
         if (products == null || products.size() <= 1) {
@@ -34,7 +26,6 @@ public class SortAlgorithms {
             Product key = products.get(i);
             int j = i - 1;
 
-            // Shift elements that have greater code than key
             while (j >= 0 && products.get(j).getCode().compareToIgnoreCase(key.getCode()) > 0) {
                 products.set(j + 1, products.get(j));
                 j--;
@@ -44,12 +35,8 @@ public class SortAlgorithms {
     }
 
     /**
-     * Inserts a single product into an already code-sorted list using the single-step
-     * logic of Insertion Sort, maintaining the sorted invariant.
-     * Time Complexity: O(n)
-     *
-     * @param products   Master list (already sorted by code).
-     * @param newProduct Product to insert.
+     * Inserts a single product into an already code-sorted list using the insertion step
+     * of Insertion Sort, maintaining the sorted invariant in O(n) time.
      */
     public static void insertInSortedOrder(List<Product> products, Product newProduct) {
         if (products == null || newProduct == null) {
@@ -57,7 +44,7 @@ public class SortAlgorithms {
         }
 
         int i = products.size() - 1;
-        products.add(newProduct); // expand size by 1
+        products.add(newProduct);
 
         while (i >= 0 && products.get(i).getCode().compareToIgnoreCase(newProduct.getCode()) > 0) {
             products.set(i + 1, products.get(i));
@@ -67,20 +54,13 @@ public class SortAlgorithms {
     }
 
     /**
-     * Performs a stable Merge Sort on a defensive copy of a list using a custom Comparator.
+     * Performs a stable Merge Sort on a defensive copy of a list using a Comparator.
      * Guaranteed Time Complexity: O(n log n)
-     * Space Complexity: O(n)
-     *
-     * @param list       Input list to sort (remains unmodified).
-     * @param comparator Ordering rule (e.g. descending sales, ascending stock).
-     * @param <T>        Element type.
-     * @return A newly sorted ArrayList copy.
      */
     public static <T> List<T> mergeSort(List<T> list, Comparator<T> comparator) {
         if (list == null) {
             return new ArrayList<>();
         }
-        // Create defensive copy to never disturb source list
         List<T> copy = new ArrayList<>(list);
         if (copy.size() <= 1) {
             return copy;
@@ -92,12 +72,8 @@ public class SortAlgorithms {
     private static <T> void mergeSortRecursive(List<T> list, int left, int right, Comparator<T> comparator) {
         if (left < right) {
             int mid = left + (right - left) / 2;
-
-            // Divide
             mergeSortRecursive(list, left, mid, comparator);
             mergeSortRecursive(list, mid + 1, right, comparator);
-
-            // Conquer (Combine)
             merge(list, left, mid, right, comparator);
         }
     }

@@ -1,5 +1,3 @@
-package com.kingpin.dsa;
-
 /**
  * Generic node for custom singly-linked data structures.
  * Used by OrderQueue to maintain FIFO order with front and rear pointers.

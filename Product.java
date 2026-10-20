@@ -1,5 +1,3 @@
-package com.kingpin.model;
-
 /**
  * Represents a retail streetwear product in the Kingpin MNL inventory.
  */

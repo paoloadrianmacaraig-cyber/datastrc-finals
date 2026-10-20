@@ -1,6 +1,3 @@
-package com.kingpin.dsa;
-
-import com.kingpin.model.Order;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +24,6 @@ public class OrderQueue {
 
     /**
      * Appends an order to the rear of the queue in O(1) time.
-     *
-     * @param order The confirmed order to enqueue.
      */
     public void enqueue(Order order) {
         if (order == null) {
@@ -47,9 +42,6 @@ public class OrderQueue {
 
     /**
      * Removes and returns the order at the front of the queue in O(1) time.
-     *
-     * @return The next order to be served.
-     * @throws IllegalStateException if the queue is empty.
      */
     public Order dequeue() {
         if (isEmpty()) {
@@ -66,8 +58,6 @@ public class OrderQueue {
 
     /**
      * Inspects the next order to be served without removing it from the queue in O(1) time.
-     *
-     * @return The order currently at the front, or null if the queue is empty.
      */
     public Order peek() {
         if (isEmpty()) {
@@ -78,14 +68,7 @@ public class OrderQueue {
 
     /**
      * Cancels an order from anywhere in the queue using queue rotation in O(n) time.
-     *
-     * Why rotation? Direct removal from the middle of a FIFO queue violates
-     * pure queue abstract data type semantics. By repeatedly dequeuing and re-enqueuing
-     * all non-matching elements exactly `size` times, the target element is extracted
-     * while preserving the exact relative FIFO order of all remaining orders.
-     *
-     * @param orderNumber The unique identifier of the order to cancel.
-     * @return The cancelled Order object if found and removed, or null if not found.
+     * Preserves strict FIFO sequence of all remaining orders.
      */
     public Order cancel(int orderNumber) {
         if (isEmpty()) {
@@ -98,11 +81,9 @@ public class OrderQueue {
         for (int i = 0; i < currentCount; i++) {
             Order current = dequeue();
             if (current.getOrderNumber() == orderNumber && removedOrder == null) {
-                // Target found: mark as removed and do NOT re-enqueue
                 removedOrder = current;
                 removedOrder.setStatus("CANCELLED");
             } else {
-                // Not the target (or duplicate check): re-enqueue to back
                 enqueue(current);
             }
         }
@@ -110,30 +91,14 @@ public class OrderQueue {
         return removedOrder;
     }
 
-    /**
-     * Checks if the queue has no pending orders.
-     *
-     * @return true if empty, false otherwise.
-     */
     public boolean isEmpty() {
         return front == null;
     }
 
-    /**
-     * Returns the total count of pending orders in the queue.
-     *
-     * @return integer size.
-     */
     public int getSize() {
         return size;
     }
 
-    /**
-     * Returns a non-destructive list representation of the pending orders
-     * from front to rear for display and reporting purposes.
-     *
-     * @return List of pending orders.
-     */
     public List<Order> getAllOrders() {
         List<Order> list = new ArrayList<>();
         Node<Order> current = front;
@@ -144,9 +109,6 @@ public class OrderQueue {
         return list;
     }
 
-    /**
-     * Clears all orders from the queue.
-     */
     public void clear() {
         front = null;
         rear = null;

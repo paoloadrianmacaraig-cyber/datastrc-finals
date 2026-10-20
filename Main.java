@@ -1,15 +1,3 @@
-package com.kingpin;
-
-import com.kingpin.dsa.SearchAlgorithms;
-import com.kingpin.model.Order;
-import com.kingpin.model.OrderItem;
-import com.kingpin.model.Product;
-import com.kingpin.service.InventoryService;
-import com.kingpin.service.OrderService;
-import com.kingpin.service.ReportService;
-import com.kingpin.util.ConsoleUI;
-
-import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,8 +8,8 @@ import java.util.Scanner;
  * iterative binary search, linear search, insertion sort, and merge sort.
  */
 public class Main {
-    private static final String INVENTORY_FILE = "data/inventory.csv";
-    private static final String SALES_HISTORY_FILE = "data/sales_history.csv";
+    private static final String INVENTORY_FILE = "inventory.csv";
+    private static final String SALES_HISTORY_FILE = "sales_history.csv";
 
     private final InventoryService inventoryService;
     private final OrderService orderService;
@@ -29,9 +17,6 @@ public class Main {
     private final Scanner scanner;
 
     public Main() {
-        // Ensure data directory exists
-        new File("data").mkdirs();
-
         this.inventoryService = new InventoryService(INVENTORY_FILE);
         this.orderService = new OrderService(SALES_HISTORY_FILE, inventoryService);
         this.reportService = new ReportService(inventoryService, orderService);
@@ -46,7 +31,6 @@ public class Main {
     public void run() {
         ConsoleUI.printBanner();
 
-        // Check for low stock warnings on startup
         List<Product> initialLowStock = inventoryService.getLowStockProducts();
         if (!initialLowStock.isEmpty()) {
             ConsoleUI.printWarning("ALERT: " + initialLowStock.size() + " product(s) currently at or below low-stock threshold!");
@@ -548,8 +532,6 @@ public class Main {
             }
         }
     }
-
-    // --- Helpers ---
 
     private String prompt(String message) {
         System.out.print(message);
