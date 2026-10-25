@@ -1,0 +1,2 @@
+# Remove the date below (leave demoDate= empty) to use the real date.
+demoDate=2026-10-29
